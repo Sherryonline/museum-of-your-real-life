@@ -3,13 +3,15 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { FavoriteButton } from "@/features/inventory/favorite-button";
 import { getArtifactDetail } from "@/features/inventory/actions";
+import { getArtifactTimeline } from "@/features/inventory/discovery-actions";
+import { TimelineCard } from "@/features/inventory/discovery-components";
 import { RarityBadge } from "@/features/rewards/rarity-badge";
 import { requireUser } from "@/lib/auth/guards";
 
 export default async function ArtifactDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireUser();
   const { id } = await params;
-  const artifact = await getArtifactDetail(id);
+  const [artifact, timeline] = await Promise.all([getArtifactDetail(id), getArtifactTimeline(id)]);
 
   if (!artifact) {
     notFound();
@@ -70,6 +72,7 @@ export default async function ArtifactDetailPage({ params }: { params: Promise<{
           </dl>
         </div>
       </Card>
+      <TimelineCard timeline={timeline} />
     </div>
   );
 }

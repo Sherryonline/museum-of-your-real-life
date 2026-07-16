@@ -1,11 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test("inventory route requires authentication", async ({ page }) => {
-  await page.goto("/app/inventory");
-  await expect(page).toHaveURL(/\/login/);
-});
-
-test("inventory filters remain behind authentication", async ({ page }) => {
-  await page.goto("/app/inventory?ownership=ALL&sort=RARITY_DESC&q=coffee");
-  await expect(page).toHaveURL(/\/login/);
+test("inventory discovery APIs require authentication", async ({ request }) => {
+  for (const endpoint of [
+    "/api/inventory/book",
+    "/api/inventory/progress",
+    "/api/inventory/recommendations",
+    "/api/inventory/statistics",
+    "/api/inventory/timeline/00000000-0000-0000-0000-000000000001",
+  ]) {
+    const response = await request.get(endpoint);
+    expect(response.status(), endpoint).toBe(401);
+  }
 });

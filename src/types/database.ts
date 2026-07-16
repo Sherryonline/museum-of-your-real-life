@@ -270,6 +270,15 @@ export type UserItemFavorite = {
   created_at: string;
 };
 
+export type UserDiscoveredItem = {
+  id: string;
+  user_id: string;
+  item_id: string;
+  first_discovered_at: string;
+  last_discovered_at: string;
+  discover_count: number;
+};
+
 export type InventoryDashboardRpcRow = {
   total_items: number;
   owned_unique_items: number;
@@ -312,6 +321,58 @@ export type FavoriteRpcRow = {
   favorite_count: number;
   error_code: string | null;
   user_message: string;
+};
+
+export type InventoryBookRpcRow = {
+  item_id: string;
+  category_id: string;
+  category_code: string;
+  category_name: string;
+  artifact_state: "COLLECTED" | "UNKNOWN" | "HIDDEN";
+  display_name: string;
+  display_rarity: ItemRarity | null;
+  image_key: string | null;
+  discovery_date: string | null;
+  quantity: number;
+  hint_text: string | null;
+  total_count: number;
+  page: number;
+  page_size: number;
+};
+
+export type InventoryProgressRpcRow = {
+  owned_unique_items: number;
+  total_items: number;
+  discovery_percentage: number;
+  category_progress: Json;
+};
+
+export type InventoryStatisticsRpcRow = {
+  total_artifacts: number;
+  unique_artifacts: number;
+  duplicate_artifacts: number;
+  discovery_percentage: number;
+  favorite_category: string | null;
+  most_collected_artifact: string | null;
+  oldest_artifact: string | null;
+  newest_artifact: string | null;
+};
+
+export type InventoryRecommendationRpcRow = {
+  recommendation_type: "LOWEST_COMPLETION" | "CLOSEST_TO_COMPLETION";
+  category_id: string;
+  category_name: string;
+  owned_unique_items: number;
+  total_items: number;
+  remaining_items: number;
+  message: string;
+};
+
+export type ArtifactTimelineRpcRow = {
+  location_name: string;
+  visit_date: string;
+  memory_title: string | null;
+  check_in_id: string;
 };
 
 export type BetaFeedbackStatus = "OPEN" | "REVIEWED" | "RESOLVED" | "CLOSED";
@@ -626,6 +687,12 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      user_discovered_items: {
+        Row: UserDiscoveredItem;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       beta_feedback: {
         Row: BetaFeedback;
         Insert: {
@@ -765,6 +832,26 @@ export interface Database {
       set_item_favorite: {
         Args: { p_item_id: string; p_favorite: boolean };
         Returns: FavoriteRpcRow[];
+      };
+      get_inventory_book: {
+        Args: { p_category_id?: string | null; p_page?: number | null };
+        Returns: InventoryBookRpcRow[];
+      };
+      get_inventory_progress: {
+        Args: never;
+        Returns: InventoryProgressRpcRow[];
+      };
+      get_inventory_statistics: {
+        Args: never;
+        Returns: InventoryStatisticsRpcRow[];
+      };
+      get_inventory_recommendations: {
+        Args: never;
+        Returns: InventoryRecommendationRpcRow[];
+      };
+      get_artifact_timeline: {
+        Args: { p_item_id: string };
+        Returns: ArtifactTimelineRpcRow[];
       };
       record_admin_audit: {
         Args: {
