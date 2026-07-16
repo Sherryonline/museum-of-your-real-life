@@ -1,0 +1,2 @@
+-- Optional local development seed.
+-- Create auth users through Supabase Auth; the migration trigger creates profiles and PLAYER roles.

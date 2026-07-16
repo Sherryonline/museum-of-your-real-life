@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="Museum icon">
+  <rect width="192" height="192" rx="32" fill="#9f1239"/>
+  <path d="M42 76h108L96 42 42 76Z" fill="#f8fafc"/>
+  <path d="M54 84h84v12H54V84Zm10 20h14v44H64v-44Zm25 0h14v44H89v-44Zm25 0h14v44h-14v-44ZM50 156h92v12H50v-12Z" fill="#f8fafc"/>
+</svg>
