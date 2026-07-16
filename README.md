@@ -54,6 +54,21 @@ Not included:
 
 - Collection completion, badges, museum customization, trading, item usage, or advanced reward animations.
 
+## Sprint 3 Scope
+
+Added collections and badges only:
+
+- `/app/collections` lists collection progress with category filtering.
+- `/app/collections/[id]` shows required items, owned items, missing items, completion date, XP, and badge reward.
+- `/app/badges` shows earned and locked badges with safe progress hints.
+- Collection progress is based on unique owned required items.
+- Duplicate item quantity does not increase collection percentage.
+- Collection completion XP and badges are granted once by trusted database logic.
+
+Not included:
+
+- Social, marketplace, advanced museum customization, badge sharing, or generic no-code badge rules.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and set:
@@ -62,6 +77,8 @@ Copy `.env.example` to `.env.local` and set:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_SITE_URL=
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
 ```
 
 For Vercel production, set `NEXT_PUBLIC_SITE_URL` to the deployed app URL, for example:
@@ -70,11 +87,21 @@ For Vercel production, set `NEXT_PUBLIC_SITE_URL` to the deployed app URL, for e
 NEXT_PUBLIC_SITE_URL=https://museum-of-your-real-life.vercel.app
 ```
 
+For Resend email sending, replace `re_xxxxxxxxx` with your real API key in local or Vercel environment variables:
+
+```bash
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_FROM_EMAIL=onboarding@resend.dev
+```
+
+Do not commit a real Resend API key.
+
 ## Supabase
 
 Apply `supabase/migrations/0001_sprint_0_foundation.sql` to a Supabase project.
 Then review and apply `supabase/migrations/0002_sprint_1_location_checkins.sql`.
 Then review and apply `supabase/migrations/0003_sprint_2_reward_inventory.sql`.
+Then review and apply `supabase/migrations/0004_sprint_3_collections_badges.sql`.
 
 The migration:
 
@@ -101,6 +128,14 @@ Sprint 2 migration:
 - Adds trusted RPCs for opening a check-in reward, reading an opened reward, and loading inventory.
 - Updates valid check-ins to use `reward_status = PENDING` until the chest is opened.
 - Blocks browser clients from directly inserting or updating rewards, inventory, or XP.
+
+Sprint 3 migration:
+
+- Creates `collections`, `collection_items`, `user_collection_progress`, `badges`, and `user_badges`.
+- Seeds fixed badge rules and development collections from existing category reward items.
+- Recalculates collection progress from unique inventory items.
+- Grants collection completion XP and badges once.
+- Blocks browser clients from directly inserting collection progress or badges.
 
 To make a user an admin, insert an `ADMIN` row using a service role or SQL editor:
 
