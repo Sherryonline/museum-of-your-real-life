@@ -115,7 +115,7 @@ npm run dev
 After GitHub Pages deployment is enabled successfully, the game will be available here:
 
 ```text
-https://<your-github-username>.github.io/<repository-name>/
+https://museum-of-your-real-life.vercel.app/
 ```
 
 ## Verification
