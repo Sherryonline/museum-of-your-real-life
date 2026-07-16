@@ -61,6 +61,13 @@ Copy `.env.example` to `.env.local` and set:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SITE_URL=
+```
+
+For Vercel production, set `NEXT_PUBLIC_SITE_URL` to the deployed app URL, for example:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://museum-of-your-real-life.vercel.app
 ```
 
 ## Supabase

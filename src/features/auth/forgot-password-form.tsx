@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@/features/auth/schemas";
 import { getClientErrorMessage } from "@/lib/errors/client-message";
+import { getPublicEnv } from "@/lib/env/client";
 import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
@@ -25,9 +26,9 @@ export function ForgotPasswordForm() {
     setNotice(null);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
+      const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL ?? window.location.origin;
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(values.email, {
-        redirectTo: `${origin}/auth/callback?next=/reset-password`,
+        redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
       });
 
       if (resetError) {

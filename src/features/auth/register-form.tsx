@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerSchema, type RegisterInput } from "@/features/auth/schemas";
 import { getClientErrorMessage } from "@/lib/errors/client-message";
+import { getPublicEnv } from "@/lib/env/client";
 import { createClient } from "@/lib/supabase/client";
 
 export function RegisterForm() {
@@ -28,10 +29,14 @@ export function RegisterForm() {
     setNotice(null);
     try {
       const supabase = createClient();
+      const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL ?? window.location.origin;
       const { error: signUpError } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-        options: { data: { display_name: values.displayName } },
+        options: {
+          emailRedirectTo: `${siteUrl}/auth/callback`,
+          data: { display_name: values.displayName },
+        },
       });
 
       if (signUpError) {

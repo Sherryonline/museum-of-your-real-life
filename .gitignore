@@ -12,3 +12,5 @@ test-results/
 supabase/.temp/
 
 tsconfig.tsbuildinfo
+.vercel
+.env*
