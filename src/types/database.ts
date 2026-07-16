@@ -4,8 +4,9 @@ export type MuseumVisibility = "PRIVATE" | "PUBLIC";
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 export type LocationStatus = "ACTIVE" | "INACTIVE";
 export type CheckInValidationStatus = "VALID" | "REJECTED" | "SUSPICIOUS";
-export type RewardStatus = "NOT_APPLICABLE" | "PENDING" | "BLOCKED";
+export type RewardStatus = "NOT_APPLICABLE" | "PENDING" | "GRANTED" | "BLOCKED";
 export type MemoryVisibility = "PRIVATE" | "PUBLIC";
+export type ItemRarity = "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY";
 
 export type Profile = {
   id: string;
@@ -86,6 +87,117 @@ export type AppConfiguration = {
   description: string;
   status: LocationStatus;
   updated_at: string;
+};
+
+export type Item = {
+  id: string;
+  code: string;
+  category_id: string;
+  name: string;
+  description: string;
+  rarity: ItemRarity;
+  image_key: string;
+  base_xp: number;
+  status: LocationStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LootTable = {
+  id: string;
+  code: string;
+  category_id: string;
+  name: string;
+  version: number;
+  effective_from: string;
+  effective_to: string | null;
+  status: LocationStatus;
+  created_at: string;
+};
+
+export type LootTableItem = {
+  id: string;
+  loot_table_id: string;
+  item_id: string;
+  weight: number;
+  status: LocationStatus;
+};
+
+export type RewardTransaction = {
+  id: string;
+  user_id: string;
+  check_in_id: string;
+  loot_table_id: string;
+  loot_table_version: number;
+  item_id: string;
+  rarity: ItemRarity;
+  item_quantity: number;
+  xp_awarded: number;
+  created_at: string;
+};
+
+export type UserInventory = {
+  id: string;
+  user_id: string;
+  item_id: string;
+  quantity: number;
+  first_collected_at: string;
+  last_collected_at: string;
+};
+
+export type XpTransaction = {
+  id: string;
+  user_id: string;
+  source_type: "CHECK_IN_REWARD" | "DUPLICATE_ITEM";
+  source_id: string;
+  amount: number;
+  description: string;
+  created_at: string;
+};
+
+export type LevelConfiguration = {
+  level: number;
+  required_total_xp: number;
+  title: string;
+  status: LocationStatus;
+};
+
+export type RewardRpcRow = {
+  reward_transaction_id: string | null;
+  check_in_id: string | null;
+  item_id: string | null;
+  item_code: string | null;
+  item_name: string | null;
+  item_description: string | null;
+  rarity: ItemRarity | null;
+  image_key: string | null;
+  xp_awarded: number;
+  duplicate: boolean;
+  inventory_quantity: number;
+  total_xp: number;
+  level: number;
+  level_title: string;
+  reward_status: RewardStatus;
+  error_code: string | null;
+  user_message: string;
+};
+
+export type InventoryRpcRow = {
+  inventory_id: string;
+  item_id: string;
+  item_code: string;
+  item_name: string;
+  item_description: string;
+  rarity: ItemRarity;
+  image_key: string;
+  category_code: string;
+  category_name: string;
+  quantity: number;
+  first_collected_at: string;
+  last_collected_at: string;
+  total_xp: number;
+  level: number;
+  level_title: string;
 };
 
 export interface Database {
@@ -195,6 +307,81 @@ export interface Database {
         Update: Partial<Omit<AppConfiguration, "id">>;
         Relationships: [];
       };
+      items: {
+        Row: Item;
+        Insert: {
+          id?: string;
+          code: string;
+          category_id: string;
+          name: string;
+          description: string;
+          rarity: ItemRarity;
+          image_key: string;
+          base_xp: number;
+          status?: LocationStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<Item, "id" | "created_at">>;
+        Relationships: [];
+      };
+      loot_tables: {
+        Row: LootTable;
+        Insert: {
+          id?: string;
+          code: string;
+          category_id: string;
+          name: string;
+          version: number;
+          effective_from?: string;
+          effective_to?: string | null;
+          status?: LocationStatus;
+          created_at?: string;
+        };
+        Update: Partial<Omit<LootTable, "id" | "created_at">>;
+        Relationships: [];
+      };
+      loot_table_items: {
+        Row: LootTableItem;
+        Insert: {
+          id?: string;
+          loot_table_id: string;
+          item_id: string;
+          weight: number;
+          status?: LocationStatus;
+        };
+        Update: Partial<Omit<LootTableItem, "id">>;
+        Relationships: [];
+      };
+      reward_transactions: {
+        Row: RewardTransaction;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      user_inventory: {
+        Row: UserInventory;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      xp_transactions: {
+        Row: XpTransaction;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      level_configurations: {
+        Row: LevelConfiguration;
+        Insert: {
+          level: number;
+          required_total_xp: number;
+          title: string;
+          status?: LocationStatus;
+        };
+        Update: Partial<Omit<LevelConfiguration, "level">>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -269,6 +456,18 @@ export interface Database {
           memory_note: string | null;
           memory_visibility: MemoryVisibility | null;
         }>;
+      };
+      open_check_in_reward: {
+        Args: { p_check_in_id: string };
+        Returns: RewardRpcRow[];
+      };
+      get_check_in_reward: {
+        Args: { p_check_in_id: string };
+        Returns: RewardRpcRow[];
+      };
+      get_user_inventory: {
+        Args: never;
+        Returns: InventoryRpcRow[];
       };
     };
     Enums: Record<string, never>;

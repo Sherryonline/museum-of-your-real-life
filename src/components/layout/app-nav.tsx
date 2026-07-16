@@ -1,6 +1,6 @@
 "use client";
 
-import { History, LogOut, MapPin, Settings, Shield, UserRound } from "lucide-react";
+import { Archive, History, LogOut, MapPin, Settings, Shield, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -13,6 +13,7 @@ const links = [
   { href: "/app", label: "Home", icon: UserRound },
   { href: "/app/nearby", label: "Nearby", icon: MapPin },
   { href: "/app/check-ins", label: "Check-ins", icon: History },
+  { href: "/app/inventory", label: "Inventory", icon: Archive },
   { href: "/app/profile", label: "Profile", icon: UserRound },
   { href: "/app/settings", label: "Settings", icon: Settings },
   { href: "/admin", label: "Admin", icon: Shield },

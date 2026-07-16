@@ -12,7 +12,7 @@ export default async function AppHomePage() {
   const [{ data: profile }, checkIns, { count: memoryCount }] = await Promise.all([
     supabase.from("profiles").select("display_name,museum_visibility,status").eq("id", user.id).single(),
     getCheckInHistory(),
-    supabase.from("memories").select("id", { count: "exact", head: true }),
+    supabase.from("user_inventory").select("id", { count: "exact", head: true }),
   ]);
   const latestValidMemory = checkIns.find((item) => item.validationStatus === "VALID" && item.memoryId);
 
@@ -40,7 +40,7 @@ export default async function AppHomePage() {
           <p className="mt-2 text-xl font-semibold">{profile?.museum_visibility ?? "PRIVATE"}</p>
         </Card>
         <Card className="p-5">
-          <p className="text-sm text-[var(--muted)]">Memories</p>
+          <p className="text-sm text-[var(--muted)]">Inventory items</p>
           <p className="mt-2 text-xl font-semibold">{memoryCount ?? 0}</p>
         </Card>
       </div>

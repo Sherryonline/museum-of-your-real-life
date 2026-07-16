@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getCheckInDetail } from "@/features/check-ins/actions";
 import { StatusBadge } from "@/features/check-ins/status-badge";
@@ -45,6 +47,15 @@ export default async function CheckInDetailPage({ params }: { params: Promise<{ 
             <dd className="mt-1 font-medium">{detail.suspiciousFlag ? "Flagged" : "None"}</dd>
           </div>
         </dl>
+        {detail.validationStatus === "VALID" ? (
+          <div className="mt-6">
+            <Button asChild>
+              <Link href={`/app/check-ins/${detail.checkInId}/chest`}>
+                {detail.rewardStatus === "GRANTED" ? "View reward" : "Open chest"}
+              </Link>
+            </Button>
+          </div>
+        ) : null}
       </Card>
       <Card className="p-5">
         <h2 className="text-lg font-semibold">Memory</h2>

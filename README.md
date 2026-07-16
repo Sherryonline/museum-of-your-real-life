@@ -40,6 +40,20 @@ Not included:
 
 - Rewards, chests, inventory, collections, badges, or museum gameplay.
 
+## Sprint 2 Scope
+
+Added reward and inventory foundation only:
+
+- `/app/check-ins/[id]/chest` opens a category reward chest for an eligible valid check-in.
+- `/app/inventory` shows collected items, XP, level, and filters by category, rarity, and ownership.
+- Valid check-ins become rewardable with `reward_status = PENDING`.
+- Opening a chest calls trusted server/database logic and never lets the client choose item, rarity, XP, or quantity.
+- Reopening the same chest returns the existing reward and does not reroll.
+
+Not included:
+
+- Collection completion, badges, museum customization, trading, item usage, or advanced reward animations.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and set:
@@ -53,6 +67,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
 Apply `supabase/migrations/0001_sprint_0_foundation.sql` to a Supabase project.
 Then review and apply `supabase/migrations/0002_sprint_1_location_checkins.sql`.
+Then review and apply `supabase/migrations/0003_sprint_2_reward_inventory.sql`.
 
 The migration:
 
@@ -72,6 +87,14 @@ Sprint 1 migration:
 - Blocks browser clients from directly inserting check-ins or memories.
 - Creates exactly one memory for a valid check-in inside the same database function that records the check-in.
 
+Sprint 2 migration:
+
+- Creates `items`, `loot_tables`, `loot_table_items`, `reward_transactions`, `user_inventory`, `xp_transactions`, and `level_configurations`.
+- Seeds development reward items, loot tables, rarity weights, duplicate XP, and 10 levels.
+- Adds trusted RPCs for opening a check-in reward, reading an opened reward, and loading inventory.
+- Updates valid check-ins to use `reward_status = PENDING` until the chest is opened.
+- Blocks browser clients from directly inserting or updating rewards, inventory, or XP.
+
 To make a user an admin, insert an `ADMIN` row using a service role or SQL editor:
 
 ```sql
@@ -85,6 +108,14 @@ on conflict (user_id, role) do nothing;
 ```bash
 npm install
 npm run dev
+```
+
+## Deployment
+
+After GitHub Pages deployment is enabled successfully, the game will be available here:
+
+```text
+https://<your-github-username>.github.io/<repository-name>/
 ```
 
 ## Verification
