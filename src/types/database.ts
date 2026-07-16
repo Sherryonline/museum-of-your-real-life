@@ -3,6 +3,7 @@ export type ProfileStatus = "ACTIVE" | "SUSPENDED";
 export type MuseumVisibility = "PRIVATE" | "PUBLIC";
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 export type LocationStatus = "ACTIVE" | "INACTIVE";
+export type LootTableStatus = "DRAFT" | "ACTIVE" | "INACTIVE";
 export type CheckInValidationStatus = "VALID" | "REJECTED" | "SUSPICIOUS";
 export type RewardStatus = "NOT_APPLICABLE" | "PENDING" | "GRANTED" | "BLOCKED";
 export type MemoryVisibility = "PRIVATE" | "PUBLIC";
@@ -111,7 +112,7 @@ export type LootTable = {
   version: number;
   effective_from: string;
   effective_to: string | null;
-  status: LocationStatus;
+  status: LootTableStatus;
   created_at: string;
 };
 
@@ -263,6 +264,21 @@ export type UserBadge = {
   awarded_at: string;
 };
 
+export type BetaFeedbackStatus = "OPEN" | "REVIEWED" | "RESOLVED" | "CLOSED";
+export type BetaFeedbackCategory = "BUG" | "IDEA" | "CONFUSING" | "PRAISE" | "OTHER";
+
+export type BetaFeedback = {
+  id: string;
+  user_id: string;
+  rating: number;
+  category: BetaFeedbackCategory;
+  message: string;
+  screenshot_url: string | null;
+  status: BetaFeedbackStatus;
+  created_at: string;
+  updated_at: string;
+};
+
 export type CollectionRpcRow = {
   collection_id: string;
   code: string;
@@ -397,7 +413,12 @@ export interface Database {
       check_ins: {
         Row: CheckIn;
         Insert: Record<string, never>;
-        Update: Record<string, never>;
+        Update: {
+          validation_status?: CheckInValidationStatus;
+          suspicious_flag?: boolean;
+          suspicious_reason?: string | null;
+          reward_status?: RewardStatus;
+        };
         Relationships: [];
       };
       memories: {
@@ -451,7 +472,7 @@ export interface Database {
           version: number;
           effective_from?: string;
           effective_to?: string | null;
-          status?: LocationStatus;
+          status?: LootTableStatus;
           created_at?: string;
         };
         Update: Partial<Omit<LootTable, "id" | "created_at">>;
@@ -547,6 +568,24 @@ export interface Database {
         Row: UserBadge;
         Insert: Record<string, never>;
         Update: Record<string, never>;
+        Relationships: [];
+      };
+      beta_feedback: {
+        Row: BetaFeedback;
+        Insert: {
+          id?: string;
+          user_id: string;
+          rating: number;
+          category: BetaFeedbackCategory;
+          message: string;
+          screenshot_url?: string | null;
+          status?: BetaFeedbackStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          status?: BetaFeedbackStatus;
+        };
         Relationships: [];
       };
     };
@@ -647,6 +686,15 @@ export interface Database {
       get_user_badges: {
         Args: never;
         Returns: BadgeRpcRow[];
+      };
+      record_admin_audit: {
+        Args: {
+          p_action: string;
+          p_entity_type: string;
+          p_entity_id?: string | null;
+          p_metadata?: Json;
+        };
+        Returns: string;
       };
     };
     Enums: Record<string, never>;

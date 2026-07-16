@@ -1,6 +1,17 @@
 "use client";
 
-import { Archive, Award, FolderKanban, History, LogOut, MapPin, Settings, Shield, UserRound } from "lucide-react";
+import {
+  Archive,
+  Award,
+  FolderKanban,
+  History,
+  LogOut,
+  MapPin,
+  MessageSquare,
+  Settings,
+  Shield,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -16,6 +27,7 @@ const links = [
   { href: "/app/inventory", label: "Inventory", icon: Archive },
   { href: "/app/collections", label: "Collections", icon: FolderKanban },
   { href: "/app/badges", label: "Badges", icon: Award },
+  { href: "/app/feedback", label: "Feedback", icon: MessageSquare },
   { href: "/app/profile", label: "Profile", icon: UserRound },
   { href: "/app/settings", label: "Settings", icon: Settings },
   { href: "/admin", label: "Admin", icon: Shield },
