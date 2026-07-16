@@ -264,6 +264,56 @@ export type UserBadge = {
   awarded_at: string;
 };
 
+export type UserItemFavorite = {
+  user_id: string;
+  item_id: string;
+  created_at: string;
+};
+
+export type InventoryDashboardRpcRow = {
+  total_items: number;
+  owned_unique_items: number;
+  total_quantity: number;
+  discovery_percentage: number;
+  total_xp: number;
+  favorite_count: number;
+  recent_artifacts: Json;
+  category_progress: Json;
+  rarity_counts: Json;
+};
+
+export type InventoryListingRpcRow = {
+  item_id: string;
+  category_id: string;
+  category_code: string;
+  category_name: string;
+  rarity: ItemRarity;
+  owned: boolean;
+  quantity: number;
+  first_found_at: string | null;
+  last_found_at: string | null;
+  is_favorite: boolean;
+  display_name: string;
+  description: string | null;
+  image_key: string | null;
+  hint_text: string | null;
+  total_count: number;
+  page: number;
+  page_size: number;
+};
+
+export type ArtifactDetailRpcRow = Omit<InventoryListingRpcRow, "total_count" | "page" | "page_size"> & {
+  xp_earned: number;
+};
+
+export type FavoriteRpcRow = {
+  item_id: string;
+  is_favorite: boolean;
+  favorite_count: number;
+  error_code: string | null;
+  user_message: string;
+};
+
 export type BetaFeedbackStatus = "OPEN" | "REVIEWED" | "RESOLVED" | "CLOSED";
 export type BetaFeedbackCategory = "BUG" | "IDEA" | "CONFUSING" | "PRAISE" | "OTHER";
 
@@ -570,6 +620,12 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      user_item_favorites: {
+        Row: UserItemFavorite;
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       beta_feedback: {
         Row: BetaFeedback;
         Insert: {
@@ -686,6 +742,29 @@ export interface Database {
       get_user_badges: {
         Args: never;
         Returns: BadgeRpcRow[];
+      };
+      get_inventory_dashboard: {
+        Args: never;
+        Returns: InventoryDashboardRpcRow[];
+      };
+      get_inventory_listing: {
+        Args: {
+          p_search?: string | null;
+          p_category_id?: string | null;
+          p_rarity?: string | null;
+          p_ownership?: string | null;
+          p_sort?: string | null;
+          p_page?: number | null;
+        };
+        Returns: InventoryListingRpcRow[];
+      };
+      get_artifact_detail: {
+        Args: { p_item_id: string };
+        Returns: ArtifactDetailRpcRow[];
+      };
+      set_item_favorite: {
+        Args: { p_item_id: string; p_favorite: boolean };
+        Returns: FavoriteRpcRow[];
       };
       record_admin_audit: {
         Args: {
