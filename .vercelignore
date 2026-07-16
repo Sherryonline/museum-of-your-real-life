@@ -1,0 +1,13 @@
+.agents/
+.vscode/
+.env
+.env.local
+.env.*.local
+.next/
+coverage/
+node_modules/
+playwright-report/
+test-results/
+tests/
+*.log
+*.tsbuildinfo
