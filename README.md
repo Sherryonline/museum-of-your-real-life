@@ -26,6 +26,20 @@ Not included:
 
 - Museum items, uploads, galleries, sharing, comments, invitations, billing, or notifications
 
+## Sprint 1 Scope
+
+Added location and check-in foundation only:
+
+- `/app/nearby` requests one-time browser geolocation, loads active nearby locations, and submits check-ins.
+- `/app/check-ins` shows the user's check-in history.
+- `/app/check-ins/[id]` shows a check-in result and memory summary.
+- `/app` shows a check-in action, recent check-ins, total memories, and latest valid memory.
+- `/admin` shows read-only counts for locations, check-ins, and suspicious check-ins.
+
+Not included:
+
+- Rewards, chests, inventory, collections, badges, or museum gameplay.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and set:
@@ -38,6 +52,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ## Supabase
 
 Apply `supabase/migrations/0001_sprint_0_foundation.sql` to a Supabase project.
+Then review and apply `supabase/migrations/0002_sprint_1_location_checkins.sql`.
 
 The migration:
 
@@ -48,6 +63,14 @@ The migration:
 - Allows profile updates only for `display_name`, `avatar_key`, and `museum_visibility`
 - Allows admins to read operational tables through `public.is_admin()`
 - Keeps audit log inserts unavailable to browser-authenticated clients
+
+Sprint 1 migration:
+
+- Creates `location_categories`, `locations`, `check_ins`, `memories`, and `app_configurations`.
+- Seeds development-only location categories, locations, and check-in configuration.
+- Adds trusted RPCs for nearby location search, check-in processing, check-in history, and detail lookup.
+- Blocks browser clients from directly inserting check-ins or memories.
+- Creates exactly one memory for a valid check-in inside the same database function that records the check-in.
 
 To make a user an admin, insert an `ADMIN` row using a service role or SQL editor:
 
